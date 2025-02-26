@@ -1,30 +1,28 @@
-from flask import Flask, render_template
-import psycopg2
+#!/usr/bin/python3
 
-app = Flask(__name__)
+import cgi
+import cgitb
+import sqlite3
 
-# PostgreSQL connection details
-DB_CONFIG = {
-    "host": "192.168.56.30",
-    "dbname": "cs_dashboard",
-    "user": "student",
-    "password": "ecupirate"
-}
+cgitb.enable()
 
-def get_faculty_data():
-    """Fetch faculty data from PostgreSQL."""
-    conn = psycopg2.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, name, title, email, department, phone FROM faculty;")
-    faculty_list = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return faculty_list
+print("Content-type: text/html\n")
 
-@app.route('/')
-def index():
-    faculty_data = get_faculty_data()
-    return render_template('faculty.html', faculty=faculty_data)
+conn = sqlite3.connect('/home/student/team5-phase2/faculty.db')
+cursor = conn.cursor()
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+cursor.execute("SELECT id, name, title, email, department, phone FROM faculty;")
+faculty_data = cursor.fetchall()
+
+print("<html><head><title>Faculty Information</title></head><body>")
+print("<h2>Faculty Information</h2>")
+print("<table border='1'><tr><ID</th><th>Name</th><th>Title</th><th>Email</th><th>Department</th><th>Phone</th></tr>")
+
+for faculty in faculty_data:
+    print(f"<tr><td>{faculty[0]}</td><td>{faculty[1]}</td><td>{faculty[2]}</td>")
+    print(f"<td><a href='mailto:{faculty[3]}'>{faculty[3]}</a></td><td>{faculty[4]}</td><td>{faculty[5]}</td></tr>")
+
+print("</table></body></html>")
+
+cursor.close()
+conn.close()
