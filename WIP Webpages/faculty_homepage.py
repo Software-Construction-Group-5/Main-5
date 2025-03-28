@@ -45,24 +45,51 @@ print("""
 """)
 
 print("""
-    <form method="get" action="db_test.py">
-        <input type="submit" value="ALL Courses" />
-    </form>
-    """.format(search_query if search_query else ""))
+<form method="get" action="db_test.py">
+    <input type="submit" value="ALL Courses" />
+</form>
+    """)
+
+    # Print the search form
+print("""
+<form method="get" action="search_test5.py">
+    <label for="search">Search Faculty Name:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search" />
+</form>
+    """)
+
+print("""
+<form method="get" action="faculty_phone_search.py">
+    <label for="search">Search Faculty Phone #:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search2" />
+</form>
+    """)
+
+print("""
+<form method="get" action="faculty_email_search.py">
+    <label for="search">Search Faculty Email:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search3" />
+</form>
+    """)
+
+
 
 
 print("PGSQL version:<br>")
 cursor.execute("SELECT version();")
 print("Result:", cursor.fetchall())
 
-print("<br><h2>First 27 rows from table faculty:</h2>")
+print("<br><h2>Showing all Faculty:</h2>")
 cursor.execute("SELECT * FROM faculty;")
 rows = cursor.fetchall()
 
 if rows:
     # Start the HTML table
     print("<table>")
-    print("<tr><th>ID</th><th>Course Name</th><th>Department</th><th>Credits</th></tr>")  # Replace these with actual column names
+    print("<tr><th>id</th><th>name</th><th>title</th><th>email</th><th>department</th><th>phone</th></tr>")  # Replace these with actual column names
     for row in rows:
         print("<tr>")
         for cell in row:

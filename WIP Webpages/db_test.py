@@ -44,12 +44,46 @@ print("""
 <body>
 """)
 
+
+print("""
+<form method="get" action="faculty_homepage.py">
+    <input type="submit" value="Faculty" />
+</form>
+    """)
+
+    # Print the search form
+print("""
+<form method="get" action="courses_prefix_search.py">
+    <label for="search">Search Course Prefix:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search" />
+</form>
+    """)
+
+print("""
+<form method="get" action="courses_number_search.py">
+    <label for="search">Search Course #:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search2" />
+</form>
+    """)
+
+print("""
+<form method="get" action="course_title_search.py">
+    <label for="search">Search Course Title:</label>
+    <input type="text" id="search" name="search" value="" />
+    <input type="submit" value="Search3" />
+</form>
+    """)
+
+
+
 print("PGSQL version:<br>")
 cursor.execute("SELECT version();")
 print("Result:", cursor.fetchall())
 
-print("<br><h2>First 27 rows from table faculty:</h2>")
-cursor.execute("SELECT * FROM cs_courses_2 LIMIT 27;")
+print("<br><h2>Showing All Courses:</h2>")
+cursor.execute("SELECT * FROM cs_courses_2;")
 rows = cursor.fetchall()
 
 if rows:
