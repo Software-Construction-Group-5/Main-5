@@ -1,0 +1,70 @@
+#!/usr/bin/python3
+import psycopg2
+
+conn = psycopg2.connect("host=192.168.56.30 dbname=cs_dashboard user=webuser1 password=ecupirate")
+
+
+cursor = conn.cursor()
+
+print ("Content-type: text/html\n\n")
+print("""
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+""")
+
+
+print("PGSQL version:<br>")
+cursor.execute("SELECT version();")
+print("Result ",cursor.fetchall()) 
+
+print("<br>First 10 from table faculty:")
+print()
+cursor.execute("SELECT * FROM faculty limit 27;")
+rows = cursor.fetchall()
+if rows:
+	print("<br>")
+	print(" | ".join(str(cell) for cell in rows[0]))
+	print("<br>")
+
+	for row in rows[1:]:
+		print(" | ".join(str(cell) for cell in row))
+		print("<br>")
+#print("Result", cursor.fetchall())
+cursor.close()
+conn.close
+
+
+
