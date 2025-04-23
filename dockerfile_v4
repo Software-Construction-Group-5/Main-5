@@ -1,0 +1,56 @@
+FROM ubuntu:22.04
+
+# Set environment variable to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update system and install dependencies
+RUN apt-get update && \
+    apt-get -y dist-upgrade && \
+    apt-get -y install apache2 postgresql postgresql-contrib python3 python3-pip && \
+    apt-get clean
+
+# Retry apt-get update if it fails
+RUN apt-get update || (sleep 10 && apt-get update)
+
+
+# Enable CGI in Apache
+RUN a2enmod cgi
+
+# Create a directory for your project
+RUN mkdir -p /home/student/Group-5/webpages/
+
+# Copy webpages from project folder to the container
+COPY project_branch_phase3/Main-5/websrv/ /home/student/Group-5/project_branch_phase3/Main-5/websrv/
+
+# Create CGI directory
+RUN mkdir -p /usr/lib/cgi-bin
+
+# (Optional) Copy your CGI scripts into the CGI bin folder if you have any
+COPY project_branch_phase3/Main-5/cgi-bin/ /usr/lib/cgi-bin/
+
+# Ensure any CGI scripts are executable (only if needed)
+RUN chmod +x /usr/lib/cgi-bin/*.py
+
+# Allow CGI execution in Apache default config
+RUN sed -i 's|#ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/|ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/|' /etc/apache2/sites-available/000-default.conf && \
+    echo '<Directory "/usr/lib/cgi-bin/">' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    AllowOverride None' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    Options +ExecCGI' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    AddHandler cgi-script .cgi .py' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '</Directory>' >> /etc/apache2/sites-available/000-default.conf
+
+# Switch to postgres user to initialize PostgreSQL 12
+USER postgres
+RUN /usr/lib/postgresql/12/bin/pg_ctl initdb -D /var/lib/postgresql/12/main || echo "PostgreSQL already initialized"
+
+# Switch back to root user
+USER root
+
+# Expose default ports for Apache and PostgreSQL
+EXPOSE 80 5432
+
+# Set working directory
+WORKDIR /home/student/Group-5
+
+# Start both PostgreSQL and Apache together
+CMD service postgresql start && apachectl -D FOREGROUND
