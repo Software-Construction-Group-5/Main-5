@@ -1,7 +1,7 @@
 # Main-5
 Software Construction 
 
-Vist faculty_homepage.py first
+Visit faculty_homepage.py first
 
 copy this address into web browser:
 http://192.168.56.10/cgi-bin/faculty_homepage.py?
